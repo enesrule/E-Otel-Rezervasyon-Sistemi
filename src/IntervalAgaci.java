@@ -1,5 +1,6 @@
 //Burası rezervasyonları eklicek ve cakısma kontrolu yapcak olan kısım
-
+/*Zaman Karmaşıklığı: O(n*h), burada n aralık sayısı ve h aralık ağacının yüksekliğidir. Ortalama durumlarda, h = log(n) ve zaman karmaşıklığı O(n * log(n)) olacaktır.
+ En kötü durumda, ağaç çarpık olacak ve yükseklik n olacak, dolayısıyla zaman karmaşıklığı O(n^2) olacaktır. Aralık ağacı AVL ağacı gibi kendi kendini dengeleyen bir ağaç haline getirilirse, zaman karmaşıklığı O(n * log n)'ye düşer. */
 import java.time.LocalDate;
 
 public class IntervalAgaci {
@@ -50,6 +51,47 @@ public class IntervalAgaci {
 
         // Değilse sağa bak
         return cakismaVarMi(dugum.sag, bas, bit);
+    }
+
+    public void sil(int odaNo, LocalDate girisTarihi, LocalDate cikisTarihi){
+        kok = sil(kok,odaNo, girisTarihi, cikisTarihi);
+    }
+
+    private IntervalDugumu sil(IntervalDugumu dugum, int odaNo, LocalDate bas, LocalDate bit){
+        if(dugum == null) return null;
+    
+
+        //Bu dugum mu silincek
+        if(dugum.odaNo == odaNo && dugum.baslangic.equals(bas) && dugum.bitis.equals(bit)) {//Rezervasyonu iptal edilcek olan dugumun odaNo, bas, bitis degerleri bizim iptal etcegimizle aynıysa
+            //sol cocuk yoksa sagı dondur
+            if(dugum.sol == null) return dugum.sag;
+            //sag cocuk yoksa solu dondur
+            if(dugum.sag == null) return dugum.sol;
+
+            //iki cocuk varsa silcegimiz icin sagın en solunu bulalım
+            IntervalDugumu successor = dugum.sag;
+            while(successor.sol != null) successor = successor.sol;
+
+            //successorın verilerini bu dugume kopyalayalım
+            dugum.odaNo = successor.odaNo;
+            dugum.baslangic = successor.baslangic;
+            dugum.bitis  =successor.bitis;
+
+            //SIMDI successorı sag daldan silelim
+            dugum.sag = sil(dugum.sag, successor.odaNo, successor.baslangic, successor.bitis);
+
+        }else if(bas.isBefore(dugum.baslangic)){
+            dugum.sol = sil(dugum.sol, odaNo, bas, bit);
+        }else{
+            dugum.sag = sil(dugum.sag, odaNo, bas, bit);
+        }
+    
+        //max degerini guncellicez
+        dugum.max = dugum.bitis;
+        if(dugum.sol != null && dugum.sol.max.isAfter(dugum.max)) dugum.max = dugum.sol.max;
+        if(dugum.sag != null && dugum.sag.max.isAfter(dugum.max)) dugum.max = dugum.sag.max;
+        return dugum;
+
     }
 }
 /*

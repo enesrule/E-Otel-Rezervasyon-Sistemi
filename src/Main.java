@@ -238,6 +238,7 @@ Neden musteriler? → Bu dolabın adı, sonradan bu isimle eriseceksin
                                 Oda iptalOda = iptalRezervasyon.getOda(); ///İptal edilen rezervasyonun hangi odaya ait olduğunu getOda() ile çektik ve iptalOda değişkenine atadık.
                                 rezervasyonlar.remove(iptalRezervasyonNo); //rezervasyonlar HashMap'inden iptalRezervasyonNo anahtarına karşılık gelen rezervasyonu siler. Artık o rezervasyon bilgilerine rezervasyonlar.get(iptalRezervasyonNo) diyerek ulaşmaya çalıştığında null dönecektir çünkü o rezervasyon artık sistemde yok.
                                 tamamlananRezervasyonlar.ekle(iptalRezervasyon); //Rezervasyon iptal edilince BST ye ekledim
+                                intervalAgaci.sil(iptalOda.getOdaNo(), iptalRezervasyon.getGirisTarihi(), iptalRezervasyon.getCikisTarihi());
                                 System.out.println("Rezervasyon iptal edildi: " + iptalRezervasyon);
 
                                 // Bekleme listesinde bu oda için biri var mı?
@@ -265,8 +266,8 @@ Neden musteriler? → Bu dolabın adı, sonradan bu isimle eriseceksin
                             break;
                             
                         case 8:
-                                tamamlananRezervasyonlar.kronolojikListele();
                                 System.out.println("8. Tammalanan Rezervasyonlari Listele");
+                                tamamlananRezervasyonlar.kronolojikListele();
                                 break;
                             
                         case 9:
