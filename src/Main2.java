@@ -3,7 +3,7 @@ import java.time.LocalDate;
 import java.util.HashMap; // HashMap verileri depolamak için,
 import java.util.Scanner; // Scanner kullanıcıdan girdi almak için,
 
-public class Main {
+public class Main2 {
             static HashMap<Integer, Oda> odalar = new HashMap<>();//Key, value > değişken adı
             static HashMap<Integer, Musteri> musteriler = new HashMap<>();
             static HashMap<Integer, Rezervasyon> rezervasyonlar = new HashMap<>();//Aktif rezervasyonlae
