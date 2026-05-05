@@ -802,8 +802,8 @@ private static JPanel ekranMusteriEkle() {
             txtTc.setText(""); txtAdres.setText(""); txtId.setText(String.valueOf(id + 1));
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(frame,
-                    "Lütfen alanları doldurunuz!",
-                    "Hata", JOptionPane.ERROR_MESSAGE);
+                    "Lütfen form alanlarını eksiksiz ve doğru formatta giriniz",
+                    "Hatalı Giriş", JOptionPane.ERROR_MESSAGE);
         }
     });
 
@@ -1025,7 +1025,7 @@ private static JPanel ekranRezervasyonYap() {
 
             Musteri m = musteriler.get(mNo);
             Oda o = odalar.get(oNo);
-            IntervalDugumu cakisan = intervalAgaci.cakismaKontrol(giris, cikis);
+            IntervalDugumu cakisan = intervalAgaci.cakismaKontrol(oNo,giris, cikis);
             boolean uygun = (cakisan == null);
             double toplamUcret = o.getOdaFiyat() * (cikis.toEpochDay() - giris.toEpochDay());
 

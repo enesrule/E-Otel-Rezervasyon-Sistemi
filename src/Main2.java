@@ -134,7 +134,7 @@ Neden musteriler? → Bu dolabın adı, sonradan bu isimle eriseceksin
                         
                         //for ile yapsaydık tum rezervasyonlari tek tek dolasması gerekirdi, agac ile yarısını atlaya atlaya gittik
                         //O(logn)
-                        IntervalDugumu cakisan = intervalAgaci.cakismaKontrol(girisTarihi, cikisTarihi);
+                       IntervalDugumu cakisan = intervalAgaci.cakismaKontrol(rezervasyonOdaNo, girisTarihi, cikisTarihi);
                         Boolean rezervasyonUygun = (cakisan == null); // null ise cakisma yok uygun
 
                         double toplamUcret = rezervasyonOda.getOdaFiyat() * (cikisTarihi.toEpochDay() - girisTarihi.toEpochDay()); //Oda fiyatını, kalınan gün sayısıyla çarparak toplam ücreti hesaplar. toEpochDay() metodu, bir tarihi 1970-01-01'den itibaren geçen gün sayısına dönüştürür. İki tarih arasındaki farkı alarak kalınan gün sayısını buluruz.

@@ -32,25 +32,34 @@ public class IntervalAgaci {
     }
     
     //Cakısma kontrolu; eger verilen tarihlerde oda doluysa o dugumu doner
-    public IntervalDugumu cakismaKontrol(LocalDate bas, LocalDate bit){
-        return cakismaVarMi(kok, bas, bit);
+    public IntervalDugumu cakismaKontrol(int odaNo, LocalDate bas, LocalDate bit){
+        return cakismaVarMi(kok, odaNo,bas, bit);
     }
 
-    private IntervalDugumu cakismaVarMi(IntervalDugumu dugum, LocalDate bas, LocalDate bit){
+    private IntervalDugumu cakismaVarMi(IntervalDugumu dugum, int odaNo, LocalDate bas, LocalDate bit){
         if(dugum == null) return null;
 
-        // Cakısma kuralı: [a, b] ve [c, d] aralıkları b >= c ve d >= a ise cakısır
-        if(!(bit.isBefore(dugum.baslangic) || bas.isAfter(dugum.bitis))){
-            return dugum;
+        //1. KURAL: Hem TARİH çakışmalı, hem de ODA NUMARASI eşleşmeli
+        boolean tarihCakisiyor = !(bit.isBefore(dugum.baslangic) || bas.isAfter(dugum.bitis));
+
+        if(dugum.odaNo == odaNo && tarihCakisiyor){
+            return dugum; // Tam eşleşme bulundu
         }
 
         //Eger sol cocugun maxı aradıgımız baslangıctan büyükse sola bak
         if (dugum.sol != null && !dugum.sol.max.isBefore(bas)) {
-            return cakismaVarMi(dugum.sol, bas, bit);
+            // Sola in ve bizim odamız için çakışma var mı kontrol et
+            IntervalDugumu solSonuc = cakismaVarMi(dugum.sol, odaNo, bas, bit);
+
+            // Eğer solda kendi odamızla ilgili çakışma bulduysak onu döndür
+            if (solSonuc != null) {
+                return solSonuc;
+            }
         }
+        //bulamazsak aramayı bitirmeden sağ tarafta olma ihtimalini de değerlednirmemz gerek
 
         // Değilse sağa bak
-        return cakismaVarMi(dugum.sag, bas, bit);
+        return cakismaVarMi(dugum.sag, odaNo, bas, bit);
     }
 
     public void sil(int odaNo, LocalDate girisTarihi, LocalDate cikisTarihi){
