@@ -28,12 +28,12 @@ public class IntervalAgaci {
         /                    \
   [Ocak 5-8, max=8]    [Ocak 20-25, max=25]*/
         
-        return dugum;
+        return dugum; //Bu recursive yapının yukarı doğru geri bağlanmasını sağlar.
     }
     
     //Cakısma kontrolu; eger verilen tarihlerde oda doluysa o dugumu doner
     public IntervalDugumu cakismaKontrol(int odaNo, LocalDate bas, LocalDate bit){
-        return cakismaVarMi(kok, odaNo,bas, bit);
+        return cakismaVarMi(kok, odaNo, bas, bit); //kökle başlama sebebi aramaya ağacın en üstünden başlanmalı.
     }
 
     private IntervalDugumu cakismaVarMi(IntervalDugumu dugum, int odaNo, LocalDate bas, LocalDate bit){
@@ -79,7 +79,8 @@ public class IntervalAgaci {
 
             //iki cocuk varsa silcegimiz icin sagın en solunu bulalım
             IntervalDugumu successor = dugum.sag;
-            while(successor.sol != null) successor = successor.sol;
+            while(successor.sol != null) 
+                successor = successor.sol;
 
             //successorın verilerini bu dugume kopyalayalım
             dugum.odaNo = successor.odaNo;

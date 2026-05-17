@@ -64,6 +64,28 @@ public class RezervasyonBST {
         inOrder(kok);
     }
 
+    // Swing tablosuna in-order sıralı ekle → O(n)
+    public void tabloIcinListele(javax.swing.table.DefaultTableModel model) {
+        tabloInOrder(kok, model);
+    }
+
+    private void tabloInOrder(BSTDugumu dugum, javax.swing.table.DefaultTableModel model) {
+        if (dugum == null) return;
+        tabloInOrder(dugum.sol, model);
+        Rezervasyon r = dugum.rezervasyon;
+        model.addRow(new Object[]{
+            r.getRezervasyonNo(),
+            r.getMusteri().getMusteriAdSoyad(),
+            r.getOda().getOdaNo(),
+            r.getGirisTarihi(),
+            r.getCikisTarihi(),
+            r.getToplamUcret() + " ₺",
+            r.getDurum()
+        });
+        tabloInOrder(dugum.sag, model);
+    }
+    // BST'yi in-order (tarihe göre sıralı) dolaşıp doğrudan tabloya satır ekliyor
+
     private void inOrder(BSTDugumu dugum){
         if(dugum ==null)  return; //nulla geldiginde bir ust cagrıya döner. Fonksiyondan cık ve geldigin yere geri dön
         inOrder(dugum.sol);

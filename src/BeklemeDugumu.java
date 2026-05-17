@@ -4,7 +4,7 @@ public class BeklemeDugumu {
     //O(1)
     int rezervasyonNo;
     Musteri musteri; //Musteri nesnesini saklamak için bir değişken ekledik. Bu sayede bekleme düğümünde sadece müşteri kimlik numarası değil, tüm müşteri bilgilerine erişebiliriz.
-    int odaNo;
+    int odaNo; //Hangi oda için bekleme kaydı olduğunu tutuyor.
     LocalDate girisTarihi;
     LocalDate cikisTarihi;
     BeklemeDugumu sonraki; //sonraki düğümü göstermek için

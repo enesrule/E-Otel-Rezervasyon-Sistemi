@@ -1,5 +1,5 @@
 //burda bir odanın belirli tarihler arasında dolu olup olmadığını kontrol etmek için 
-/*Invertel Tree, her düğümde bir tarih aralığını (Giriş-Çıkış) ve o düğümün alt ağacındaki en büyük bitiş tarihini (max) saklar. Bu sayede bir çakışma olup olmadığını O(log n) sürede bulabiliriz. */
+/*Interval Tree, her düğümde bir tarih aralığını (Giriş-Çıkış) ve o düğümün alt ağacındaki en büyük bitiş tarihini (max) saklar. Bu sayede bir çakışma olup olmadığını O(log n) sürede bulabiliriz. */
 import java.time.LocalDate;
 
 public class IntervalDugumu {

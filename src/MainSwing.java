@@ -28,11 +28,13 @@ static IntervalAgaci intervalAgaci = new IntervalAgaci();
 // --- GÖRSELLİK DEĞİŞKENLERİ ---
 private static JFrame frame;
 private static JPanel anaPanel;
+private static JButton aktifButon = null; // Hangi menü butonuna tıklandığını takip ediyoruz bunla
 
 // --- PROFESYONEL RENK PALETİ ---
 private static final Color L_BG          = new Color(247, 249, 252); // Çok açık gri-mavi
 private static final Color L_SIDEBAR     = new Color(30, 41, 59);    // Lacivert sidebar
 private static final Color L_SIDEBAR_HOV = new Color(51, 65, 85);
+private static final Color L_SIDEBAR_ACT = new Color(59, 130, 246);  // Aktif buton rengi (mavi)
 private static final Color L_CARD        = Color.WHITE;
 private static final Color L_TEXT        = new Color(15, 23, 42);
 private static final Color L_TEXT_SOFT   = new Color(100, 116, 139);
@@ -68,6 +70,7 @@ public static void main(String[] args) {
     odaVerileriniYukle();
     musteriVerileriYukle();
     rezervasyonVerileriYukle();
+    suresiGecmisRezervasyonlariTamamla(); //program açılınca çıkış tarihi geçmiş tüm "Aktif" rezervasyonları tarar, "Tamamlandı" yapar, odayı boşaltır
 
     SwingUtilities.invokeLater(() -> {
         if (girisEkraniGoster()) {
@@ -81,7 +84,12 @@ public static void main(String[] args) {
 // --- GİRİŞ EKRANI ---
 private static boolean girisEkraniGoster() {
     JDialog loginDialog = new JDialog((Frame) null, "E-Otel | Giriş", true);
-    loginDialog.setSize(420, 340);
+    // GİRİŞ EKRANI İÇİN İKON AYARI
+    java.net.URL iconURL = MainSwing.class.getResource("/logo.png");
+    if (iconURL != null) {
+        loginDialog.setIconImage(new ImageIcon(iconURL).getImage()); // Eğer yukarıdaki değişken adın farklıysa 'girisFrame' yazan yeri onunla değiştir.
+    }
+    loginDialog.setSize(420, 360);
     loginDialog.setLocationRelativeTo(null);
     loginDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
     loginDialog.setLayout(new BorderLayout());
@@ -185,6 +193,13 @@ private static void arayuzuOlustur() {
     if (frame != null) frame.dispose();
 
     frame = new JFrame("E-Otel | Rezervasyon Yönetim Sistemi");
+    // İKON EKLEME KODU
+    java.net.URL iconURL = MainSwing.class.getResource("/logo.png");
+    if (iconURL != null) {
+        frame.setIconImage(new ImageIcon(iconURL).getImage());
+    } else {
+        System.out.println("HATA: logo.png dosyasi src klasorunde bulunamadi!");
+    }
     frame.setSize(1200, 780);
     frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
     frame.setLocationRelativeTo(null);
@@ -250,15 +265,17 @@ private static void arayuzuOlustur() {
     frame.add(solMenu, BorderLayout.WEST);
     frame.add(anaPanel, BorderLayout.CENTER);
 
-    btnDashboard.addActionListener(e -> paneliDegistir(ekranDashboard()));
-    btnOdaPlani.addActionListener(e -> paneliDegistir(ekranOdaPlani()));
-    btnOdaEkle.addActionListener(e -> paneliDegistir(ekranOdaEkle()));
-    btnMusteriEkle.addActionListener(e -> paneliDegistir(ekranMusteriEkle()));
-    btnRezervasyonYap.addActionListener(e -> paneliDegistir(ekranRezervasyonYap()));
-    btnGuncelle.addActionListener(e -> paneliDegistir(ekranGuncelle()));
-    btnListele.addActionListener(e -> paneliDegistir(ekranListele()));
-    btnIptal.addActionListener(e -> paneliDegistir(ekranRezervasyonIptal()));
+    btnDashboard.addActionListener(e -> { menuAktifYap(btnDashboard); paneliDegistir(ekranDashboard()); });
+    btnOdaPlani.addActionListener(e -> { menuAktifYap(btnOdaPlani); paneliDegistir(ekranOdaPlani()); });
+    btnOdaEkle.addActionListener(e -> { menuAktifYap(btnOdaEkle); paneliDegistir(ekranOdaEkle()); });
+    btnMusteriEkle.addActionListener(e -> { menuAktifYap(btnMusteriEkle); paneliDegistir(ekranMusteriEkle()); });
+    btnRezervasyonYap.addActionListener(e -> { menuAktifYap(btnRezervasyonYap); paneliDegistir(ekranRezervasyonYap()); });
+    btnGuncelle.addActionListener(e -> { menuAktifYap(btnGuncelle); paneliDegistir(ekranGuncelle()); });
+    btnListele.addActionListener(e -> { menuAktifYap(btnListele); paneliDegistir(ekranListele()); });
+    btnIptal.addActionListener(e -> { menuAktifYap(btnIptal); paneliDegistir(ekranRezervasyonIptal()); });
 
+    // Açılışta Ana Sayfa aktif görünsün
+    menuAktifYap(btnDashboard);
     paneliDegistir(ekranDashboard());
     frame.setVisible(true);
 }
@@ -269,6 +286,27 @@ private static void paneliDegistir(JPanel yeniPanel) {
     anaPanel.add(yeniPanel, BorderLayout.CENTER);
     anaPanel.revalidate();
     anaPanel.repaint();
+}
+
+// --- AKTİF MENÜ BUTONU YÖNETİMİ ---
+private static void menuAktifYap(JButton tiklananButon) {
+    // Önceki aktif butonun rengini sıfırla
+    if (aktifButon != null && aktifButon != tiklananButon) {
+        aktifButon.setBackground(getSidebarBg()); // lacivert yap
+        aktifButon.setForeground(new Color(226, 232, 240));
+        aktifButon.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        aktifButon.setBorder(BorderFactory.createEmptyBorder(11, 14, 11, 14));
+    }
+    // Yeni aktif butonu vurgula
+    aktifButon = tiklananButon;
+    aktifButon.setBackground(L_SIDEBAR_ACT);
+    aktifButon.setForeground(Color.WHITE);
+    aktifButon.setFont(new Font("Segoe UI", Font.BOLD, 13));
+    // Sol tarafta beyaz çizgi ekle — aktif göstergesi
+    aktifButon.setBorder(BorderFactory.createCompoundBorder(
+        BorderFactory.createMatteBorder(0, 3, 0, 0, Color.WHITE),
+        BorderFactory.createEmptyBorder(11, 11, 11, 14)
+    ));
 }
 
 // --- MODERN MENÜ BUTONU ---
@@ -288,12 +326,18 @@ private static JButton menuButonuOlustur(String metin) {
 
     btn.addMouseListener(new MouseAdapter() {
         public void mouseEntered(MouseEvent e) {
-            btn.setBackground(getSidebarHover());
-            btn.setForeground(Color.WHITE);
+            // Aktif buton değilse hover efekti uygula
+            if (btn != aktifButon) {
+                btn.setBackground(getSidebarHover());
+                btn.setForeground(Color.WHITE);
+            }
         }
         public void mouseExited(MouseEvent e) {
-            btn.setBackground(getSidebarBg());
-            btn.setForeground(new Color(226, 232, 240));
+            // Aktif buton değilse normal renge dön
+            if (btn != aktifButon) {
+                btn.setBackground(getSidebarBg());// lacivert yaptık
+                btn.setForeground(new Color(226, 232, 240));
+            }
         }
     });
     return btn;
@@ -1412,6 +1456,48 @@ private static JPanel ekranRezervasyonIptal() {
 
     panel.add(kart, BorderLayout.CENTER);
     return panel;
+}
+//  SÜRESİ GEÇMİŞ REZERVASYON KONTROLÜ
+// Program açılınca çıkış tarihi bugünden önce olan aktif rezervasyonları
+// otomatik olarak "Tamamlandı" yapar ve odayı müsaite döndürür. O(n)
+private static void suresiGecmisRezervasyonlariTamamla() {
+    LocalDate bugun = LocalDate.now();
+    // ConcurrentModificationException'dan kaçınmak için ayrı listeye al
+    java.util.List<Integer> tamamlanacaklar = new java.util.ArrayList<>();
+
+    for (Rezervasyon r : rezervasyonlar.values()) {
+        if (r.getDurum().equals("Aktif") && r.getCikisTarihi().isBefore(bugun)) {
+            tamamlanacaklar.add(r.getRezervasyonNo());
+        }
+    }
+
+    for (int no : tamamlanacaklar) {
+        Rezervasyon r = rezervasyonlar.get(no);
+        rezervasyonlar.remove(no);          // aktif listeden çıkar
+        r.setDurum("Tamamlandı");
+        tamamlananRezervasyonlar.ekle(r);   // BST'ye ekle
+
+        // Odayı müsaite al (bekleme listesi varsa otomatik aktifleştir)
+        Oda oda = r.getOda();
+        BeklemeListe liste = beklemeListeleri.get(oda.getOdaNo());
+        if (liste != null && !liste.bosMu()) {
+            BeklemeDugumu siradaki = liste.cikar();
+            double yeniUcret = oda.getOdaFiyat()
+                    * (siradaki.cikisTarihi.toEpochDay() - siradaki.girisTarihi.toEpochDay());
+            Rezervasyon yeniRez = new Rezervasyon(
+                    siradaki.rezervasyonNo, siradaki.musteri, oda,
+                    siradaki.girisTarihi, siradaki.cikisTarihi, yeniUcret, "Aktif");
+            rezervasyonlar.put(yeniRez.getRezervasyonNo(), yeniRez);
+            // Oda hâlâ dolu — bekleme listesinden biri aldı
+        } else {
+            oda.setOdaMusait(true); // kimse beklemiyorsa oda boşaldı
+        }
+    }
+
+    if (!tamamlanacaklar.isEmpty()) {
+        System.out.println(tamamlanacaklar.size()
+                + " rezervasyon süresi dolduğu için otomatik tamamlandı.");
+    }
 }
 
 // ==========================================
